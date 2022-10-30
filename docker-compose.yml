@@ -1,0 +1,12 @@
+version: "3.7"
+services:
+  web:
+    build:
+      context: ./api
+    environment:
+      FLASK_DEBUG: "on"
+      FLASK_APP: ./app.py
+    restart: always
+    ports:
+     - "5001:5001"
+    volumes: ['./api:/api']
