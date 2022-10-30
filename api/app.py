@@ -68,6 +68,7 @@ def create_app():
                                 "model": vehicle["model"],
                                 "cargo_capacity": vehicle["cargo_capacity"],
                             });
+                    # No more vehicles
                     if data["next"] is None:
                         break
                     params["page"] += 1

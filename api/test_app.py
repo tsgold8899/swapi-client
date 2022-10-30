@@ -1,5 +1,5 @@
-from mock import patch, Mock
 from requests import Response
+from mock import patch
 import pytest
 
 from app import create_app
