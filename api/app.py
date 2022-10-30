@@ -34,12 +34,48 @@ def swapi_min_cargo_capacity_vehicles() -> dict:
 
     For each vehicle list the attrs: name, model and cargo capacity
     """
+    # Validate min_cargo_capacity param
     min_cargo_capacity = request.args.get("min_cargo_capacity")
+    if min_cargo_capacity:
+        try:
+            min_cargo_capacity = int(min_cargo_capacity)
+        except:
+            return "Invalid Request", 400
+    else:
+        min_cargo_capacity = None
 
-    # TODO
+    # Collecting vehicles meeting condition
+    vehicles = []
+    params = {
+        "page": 1
+    }
+    while True:
+        try:
+            response = SWApi().get("/vehicles", params)
+            if response.status_code == 200:
+                data = response.json()
+                for vehicle in data["results"]:
+                    cargo_capacity = None
+                    try:
+                        cargo_capacity = int(vehicle["cargo_capacity"])
+                    except:
+                        pass
+                    if min_cargo_capacity is None or (cargo_capacity is not None and cargo_capacity >= min_cargo_capacity):
+                        vehicles.append({
+                            "name": vehicle["name"],
+                            "model": vehicle["model"],
+                            "cargo_capacity": vehicle["cargo_capacity"],
+                        });
+                if data["next"] is None:
+                    break
+                params["page"] += 1
+            else:
+                return response.text, response.status_code
+        except:
+            return "Not Reachable", 404
 
     return {
-        "available_vehicles": f"TODO, list vehicles with cargo capacity that is greater or equal to {min_cargo_capacity=}."
+        "available_vehicles": vehicles
     }
 
 
